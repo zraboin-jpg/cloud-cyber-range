@@ -1,0 +1,10 @@
+// Password Spray Detection
+SigninLogs
+| where ResultType != 0
+| summarize FailedAttempts=count() by UserPrincipalName, IPAddress, bin(TimeGenerated, 10m)
+| where FailedAttempts > 5
+
+// Suspicious Role Assignment
+AuditLogs
+| where OperationName contains "Add member to role"
+| where InitiatedBy.user.userPrincipalName !contains "approved-admin"
